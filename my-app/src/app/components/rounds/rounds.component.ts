@@ -101,6 +101,7 @@ export class RoundsComponent implements OnInit {
     matchEndDate.setMinutes(matchEndDate.getMinutes() + 90); // Add 90 minutes to match start time
 
     return now >= matchStartDate && now <= matchEndDate;
+
   }
 
   goToMatch(roundId: number|undefined , matchId: number) {

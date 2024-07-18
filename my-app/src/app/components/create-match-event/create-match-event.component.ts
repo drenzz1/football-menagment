@@ -202,15 +202,17 @@ export class CreateMatchEventComponent implements OnInit{
       matchDate = new Date(matchDate);
     }
 
+    console.log(this.permArray)
+
     // Now you can safely call getMinutes
     const matchMinutes = matchDate.getMinutes();
     const createMinutes = new Date().getMinutes();
     const minuteOfTheGame = createMinutes - matchMinutes;
 
     let matchEvent = new Matcheventrequest(0, minuteOfTheGame,this.matchEventForm.value.type,this.matchEventForm.value.club_id,this.matchEventForm.value.playerId,this.matchEventForm.value.assistId,this.matchEventForm.value.sub,this.matchEventForm.value.isPenalty,this.matchEventForm.value.isOwnGoal,this.matchEventForm.value.isRedCard,this.matchEventForm.value.isYellowCard,this.matchEventForm.value.description,this.id )
-    console.log(matchEvent)
+    console.log(matchEvent.player_id)
     this.matchService.createMatchEvent(this.roundId,this.id,matchEvent).subscribe(()=>{
-      this.routes.navigateByUrl("/dashboard")
+      this.routes.navigateByUrl(`league/${this.leagueId}/seasons/${this.seasonId}/rounds/${this.roundId}/match/${this.id}`)
     },(err)=>{console.log(err)});
   }
 
@@ -225,7 +227,6 @@ export class CreateMatchEventComponent implements OnInit{
 
     if (clubIdControl) {
       const selectedTeamId = clubIdControl.value;
-      console.log(selectedTeamId)
       const clubs = this.arrayOfPlayers.filter(p=>p.clubId==selectedTeamId);
       if (clubs.length!=0){
         console.log(clubs)

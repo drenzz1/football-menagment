@@ -60,27 +60,27 @@ export class PlayersListComponent implements OnInit, OnDestroy{
     });
   }
   private subscribeToDeletedPlayersFromBroker(){
-      this.webSocketService.getMessages(this.connectionId2).subscribe((data: any)=>{
-          const deletedPlayerId: number = JSON.parse(data);
-          this.playersList = this.playersList.filter(player => player.dbId != deletedPlayerId);
-          this.totalElements--;
-          if(this.totalElements <= 0){
-            this.getPlayers();
-          }
-          console.log("player deleted: " + deletedPlayerId);
-      })
+    this.webSocketService.getMessages(this.connectionId2).subscribe((data: any)=>{
+      const deletedPlayerId: number = JSON.parse(data);
+      this.playersList = this.playersList.filter(player => player.dbId != deletedPlayerId);
+      this.totalElements--;
+      if(this.totalElements <= 0){
+        this.getPlayers();
+      }
+      console.log("player deleted: " + deletedPlayerId);
+    })
   }
   private updatePlayersListWithNotifications(): void {
     this.playersList = this.playersList.map((playerDto: PlayerDto) => {
       playerDto.permissionSent = this.playersWhoAskedPermission
-          .some((playerIdDto: PlayerIdDto) => playerIdDto.id === playerDto.dbId
-          );
+        .some((playerIdDto: PlayerIdDto) => playerIdDto.id === playerDto.dbId
+        );
       return playerDto;
     });
   }
 
 
-   public getPlayers(){
+  public getPlayers(){
     this.playerService.retrievePlayers(this.pageNumber-1,this.pageSize).subscribe((response)=>{
       this.playersList = response.content;
       this.totalElements = response.totalElements;
@@ -101,9 +101,9 @@ export class PlayersListComponent implements OnInit, OnDestroy{
 
   deletePlayer(id: number){
     this.playerService.sendDeletePlayerPermission(id)
-        .subscribe(()=> {
-          this.subscribeToSentNotificationsFromBroker();
-        })
+      .subscribe(()=> {
+        this.subscribeToSentNotificationsFromBroker();
+      })
   }
 
   updatePlayerList(playersList: PlayerDto[]): void {
@@ -113,14 +113,14 @@ export class PlayersListComponent implements OnInit, OnDestroy{
   getPlayerImageUrl(playerDto: PlayerDto): void {
     if (playerDto.imagePath) {
       this.playerService.getImageUrl(playerDto.imagePath).subscribe((blob: Blob) => {
-            const imageUrl = URL.createObjectURL(blob);
-            playerDto.imagePath = imageUrl;
-            console.log(imageUrl);
-          },
-          error => {
-            console.error(`Error fetching image for player: ${playerDto.name}`, error);
-            playerDto.imagePath = ''; // Set default image path
-          });
+          const imageUrl = URL.createObjectURL(blob);
+          playerDto.imagePath = imageUrl;
+          console.log(imageUrl);
+        },
+        error => {
+          console.error(`Error fetching image for player: ${playerDto.name}`, error);
+          playerDto.imagePath = ''; // Set default image path
+        });
     }
   }
 

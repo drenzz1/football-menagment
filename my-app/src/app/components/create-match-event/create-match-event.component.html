@@ -17,7 +17,7 @@
         <label>Player ID:</label>
         <select id="playerId" formControlName="playerId">
           <option value="">Select Player</option>
-          <option *ngFor="let player of permArray" [value]="player.id">{{player.name}}</option>
+          <option *ngFor="let player of permArray" [value]="player.dbId">{{player.name}}</option>
         </select>
 
         <div class="form-group" *ngIf="selectedEventType === 'GOAL'">
@@ -29,7 +29,7 @@
           <label>Assist ID:</label>
           <select id="assist_id" formControlName="assistId">
             <option value="">Select Player</option>
-            <option *ngFor="let player of permArray" [value]="player.id">{{player.name}}</option>
+            <option *ngFor="let player of permArray" [value]="player.dbId">{{player.name}}</option>
           </select>
         </div>
 
@@ -46,7 +46,7 @@
           <label>Sub:</label>
           <select id="sub_id" formControlName="sub">
             <option value="">Select Player</option>
-            <option *ngFor="let player of permArray" [value]="player.id">{{player.name}}</option>
+            <option *ngFor="let player of permArray" [value]="player.dbId">{{player.name}}</option>
           </select>
         </div>
 

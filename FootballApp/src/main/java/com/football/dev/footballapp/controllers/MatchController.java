@@ -55,6 +55,7 @@ public class MatchController {
     public ResponseEntity<String> editMatch(@PathVariable("roundId") Long roundId,@PathVariable("matchId") Long matchId,
                                             @RequestBody MatchDTO matchDTO) {
         matchService.updateMatch(matchDTO,matchId,roundId);
+      System.out.println(matchDTO.getMatchDate());
         return ResponseEntity.status(HttpStatus.OK).build();
     }
     @DeleteMapping("/{roundId}/delete/{matchId}")
