@@ -2,9 +2,11 @@ package com.football.dev.footballapp.services.impl;
 import com.football.dev.footballapp.dto.MatchDTO;
 import com.football.dev.footballapp.mapper.MatchDTOMapper;
 import com.football.dev.footballapp.models.*;
+import com.football.dev.footballapp.models.enums.MatchStatus;
 import com.football.dev.footballapp.repository.jparepository.RoundRepository;
 import com.football.dev.footballapp.repository.jparepository.ClubRepository;
 import com.football.dev.footballapp.repository.jparepository.MatchRepository;
+import com.football.dev.footballapp.repository.jparepository.StandingRepository;
 import com.football.dev.footballapp.services.MatchService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
@@ -28,24 +30,26 @@ public class MatchServiceImpl implements MatchService {
     private final ClubRepository clubRepository;
     private final RoundRepository roundRepository;
     private final MatchDTOMapper mapper;
+    private final StandingRepository standingRepository;
 
-  public MatchServiceImpl(MatchRepository matchRepository, ClubRepository clubRepository, RoundRepository roundRepository, MatchDTOMapper mapper) {
+  public MatchServiceImpl(MatchRepository matchRepository, ClubRepository clubRepository, RoundRepository roundRepository, MatchDTOMapper mapper, StandingRepository standingRepository) {
     this.matchRepository = matchRepository;
     this.clubRepository = clubRepository;
     this.roundRepository = roundRepository;
     this.mapper = mapper;
+    this.standingRepository = standingRepository;
   }
 
   @Override
     public void saveMatch(MatchDTO matchDto, Long roundId) {
         if(matchDto == null) throw new IllegalArgumentException("matchDto cannot be null");
         Round roundDb = roundRepository.findById(roundId).orElseThrow(() -> new EntityNotFoundException("Round not found with id: " + roundId));
-        Club homeTeam = clubRepository.findById(matchDto.getHomeTeam().getId())
-                .orElseThrow(() -> new EntityNotFoundException("Home team not found with id: " + matchDto.getHomeTeam()));
-        Club awayTeam = clubRepository.findById(matchDto.getAwayTeam().getId())
-                .orElseThrow(() -> new EntityNotFoundException("Away team not found with id: " + matchDto.getAwayTeam()));
+        Club homeTeam = clubRepository.findById(matchDto.homeTeam().id())
+                .orElseThrow(() -> new EntityNotFoundException("Home team not found with id: " + matchDto.homeTeam()));
+        Club awayTeam = clubRepository.findById(matchDto.awayTeam().id())
+                .orElseThrow(() -> new EntityNotFoundException("Away team not found with id: " + matchDto.awayTeam()));
 
-        Match match = new Match(homeTeam, awayTeam, matchDto.getMatchDate(), matchDto.getResult(), matchDto.getHomeTeamScore(), matchDto.getAwayTeamScore(), roundDb);
+        Match match = new Match(homeTeam, awayTeam, matchDto.matchDate(), matchDto.result(), matchDto.homeTeamScore(), matchDto.awayTeamScore(), roundDb);
 
         matchRepository.save(match);
 
@@ -76,10 +80,10 @@ public class MatchServiceImpl implements MatchService {
         matchRepository.findByIdAndRoundId(matchId,roundId).ifPresent(matchDb -> {
 //            matchDb.setHomeTeamId(matchDTO.getHomeTeamId());
 //            matchDb.setAwayTeamId(matchDTO.getAwayTeamId());
-            matchDb.setMatchDate(matchDTO.getMatchDate());
-            matchDb.setResult(matchDTO.getResult());
-            matchDb.setHomeTeamScore(matchDTO.getHomeTeamScore());
-            matchDb.setAwayTeamScore(matchDTO.getAwayTeamScore());
+            matchDb.setMatchDate(matchDTO.matchDate());
+            matchDb.setResult(matchDTO.result());
+            matchDb.setHomeTeamScore(matchDTO.homeTeamScore());
+            matchDb.setAwayTeamScore(matchDTO.awayTeamScore());
             matchRepository.save(matchDb);
         });
     }
@@ -136,6 +140,67 @@ public class MatchServiceImpl implements MatchService {
     matchRepository.save(match);
     clubRepository.save(club);
 
+
+  }
+
+  @Override
+  public void finnishHalfTime(Long id) {
+    Match match = matchRepository.findById(id).get();
+    match.setMatchStatus(MatchStatus.HALF_TIME);
+    matchRepository.save(match);
+  }
+
+  @Override
+  public void finnishFullTime(Long id) {
+    // Fetch match and ensure it's present
+    Optional<Match> optionalMatch = matchRepository.findById(id);
+    if (!optionalMatch.isPresent()) {
+      throw new IllegalArgumentException("Match not found with id: " + id);
+    }
+    Match match = optionalMatch.get();
+
+    Club homeTeam = match.getHomeTeamId();
+    Club awayTeam = match.getAwayTeamId();
+
+    Integer homeTeamsGoal = match.getHomeTeamScore();
+    Integer awayTeamsGoal = match.getAwayTeamScore();
+
+    Optional<Standing> optionalStanding1 = standingRepository.findById(homeTeam.getId());
+    Optional<Standing> optionalStanding2 = standingRepository.findById(awayTeam.getId());
+    if (!optionalStanding1.isPresent() || !optionalStanding2.isPresent()) {
+      throw new IllegalArgumentException("Standing not found ");
+    }
+    Standing standing1 = optionalStanding1.get();
+    Standing standing2 = optionalStanding2.get();
+
+    standing1.setGoalScored(standing1.getGoalScored() + homeTeamsGoal);
+    standing2.setGoalScored(standing2.getGoalScored() + awayTeamsGoal);
+    standing1.setGoalConceded(standing1.getGoalConceded() + awayTeamsGoal);
+    standing2.setGoalConceded(standing2.getGoalConceded() + homeTeamsGoal);
+    standing1.setMatchesPlayed(standing1.getMatchesPlayed() + 1);
+    standing2.setMatchesPlayed(standing2.getMatchesPlayed() + 1);
+
+    if (homeTeamsGoal > awayTeamsGoal) {
+      standing1.setWonMatches(standing1.getWonMatches() + 1);
+      standing2.setLostMatches(standing2.getLostMatches() + 1);
+      standing1.setPoints(standing1.getPoints()+3);
+    } else if (awayTeamsGoal > homeTeamsGoal) {
+      standing1.setLostMatches(standing1.getLostMatches() + 1);
+      standing2.setWonMatches(standing2.getWonMatches() + 1);
+      standing2.setPoints(standing2.getPoints()+3);
+    } else {
+      standing1.setDrawMatches(standing1.getDrawMatches() + 1);
+      standing2.setDrawMatches(standing2.getDrawMatches() + 1);
+      standing1.setPoints(standing1.getPoints()+1);
+      standing2.setPoints(standing2.getPoints()+1);
+
+
+    }
+
+    match.setMatchStatus(MatchStatus.FULL_TIME);
+    standingRepository.save(standing1);
+    standingRepository.save(standing2);
+    matchRepository.save(match);
 
   }
 

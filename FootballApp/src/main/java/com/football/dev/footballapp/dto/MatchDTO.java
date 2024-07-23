@@ -10,19 +10,5 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-public class MatchDTO{
-    private Long id;
-    private ClubDto homeTeam;
-    private ClubDto awayTeam;
-    private LocalDateTime matchDate;
-//    private Stadium stadium;
-    private String result;
-    private Integer homeTeamScore;
-    private Integer awayTeamScore;
-    private MatchStatus matchStatus;
-
+public record MatchDTO(Long id ,ClubDto homeTeam,ClubDto awayTeam, LocalDateTime matchDate,String result, Integer homeTeamScore,Integer awayTeamScore,MatchStatus matchStatus){
 }

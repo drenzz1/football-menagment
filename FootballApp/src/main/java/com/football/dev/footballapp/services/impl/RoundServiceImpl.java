@@ -85,8 +85,8 @@ public class RoundServiceImpl implements RoundService {
     @Override
     public void updateRound(RoundDto roundDto, Long roundId, Long seasonId) {
         roundRepository.findByIdAndSeasonId(roundId,seasonId).ifPresent(roundDb -> {
-            roundDb.setStart_date(roundDto.getStart_date());
-            roundDb.setEnd_date(roundDto.getEnd_date());
+            roundDb.setStart_date(roundDto.start_date());
+            roundDb.setEnd_date(roundDto.end_date());
             roundRepository.save(roundDb);
         });
     }

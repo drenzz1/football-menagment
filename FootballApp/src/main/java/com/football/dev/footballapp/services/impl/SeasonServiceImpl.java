@@ -38,7 +38,7 @@ public class  SeasonServiceImpl implements SeasonService {
     public Long  saveSeason(SeasonDto seasonDto,Long leagueId) {
         if(seasonDto == null) throw new IllegalArgumentException("seasonDto cannot be null");
         League leagueDb = leagueRepository.findById(leagueId).orElseThrow(() -> new EntityNotFoundException("League not found with id: " + leagueId));
-        Season season = new Season(seasonDto.getName(),seasonDto.getStart_date(),seasonDto.getEnd_date(),seasonDto.getHeadToHead().longValue(),seasonDto.getNumberOfStandings().longValue(), leagueDb);
+        Season season = new Season(seasonDto.name(),seasonDto.start_date(),seasonDto.end_date(),seasonDto.headToHead().longValue(),seasonDto.numberOfStandings().longValue(), leagueDb);
         season =seasonRepository.save(season);
 
 
@@ -48,9 +48,9 @@ public class  SeasonServiceImpl implements SeasonService {
     public void generateRoundsAndMatches(Long id){
       Season season = seasonRepository.findById(id).get();
       SeasonDto seasonDto = seasonDtoMapper.apply(season);
-      int gamesPerRound=seasonDto.getNumberOfStandings()/2;
-      List<Club> clubs=standingService.getAllClubsWhereSeasonId(seasonDto.getId());
-      List<Round> rounds = roundService.generateRoundsAndSave(clubs,gamesPerRound,seasonDto.getStart_date(),season) ;
+      int gamesPerRound=seasonDto.numberOfStandings()/2;
+      List<Club> clubs=standingService.getAllClubsWhereSeasonId(seasonDto.id());
+      List<Round> rounds = roundService.generateRoundsAndSave(clubs,gamesPerRound,seasonDto.start_date(),season) ;
 
 
 
@@ -79,7 +79,7 @@ public class  SeasonServiceImpl implements SeasonService {
     @Override
     public void updateSeason(SeasonDto seasonDto, Long seasonId, Long leagueId) {
         seasonRepository.findByIdAndLeagueId(seasonId,leagueId).ifPresent(seasonDb -> {
-            seasonDb.setName(seasonDto.getName());
+            seasonDb.setName(seasonDto.name());
             seasonRepository.save(seasonDb);
         });
     }

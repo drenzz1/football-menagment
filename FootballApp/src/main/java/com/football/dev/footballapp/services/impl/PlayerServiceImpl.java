@@ -36,7 +36,6 @@ public class PlayerServiceImpl implements PlayerService {
     private final PlayerRepository playerRepository;
     private final ClubRepository clubRepository;
     private final FileUploadService fileUploadService;
-    private final Function<PlayerDto, Player> playerDtoToPlayer;
     private final Function<Player, PlayerDto> playerToPlayerDto;
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final NotificationService notificationService;
@@ -44,11 +43,10 @@ public class PlayerServiceImpl implements PlayerService {
     private final AuthenticationHelperService authenticationHelperService;
     private final PlayerTransferDTOmapper playerTransferDTOmapper;
 
-    public PlayerServiceImpl(PlayerRepository playerRepository, ClubRepository clubRepository, FileUploadService fileUploadService, Function<PlayerDto, Player> playerDtoToPlayer, Function<Player, PlayerDto> playerToPlayerDto, SimpMessagingTemplate simpMessagingTemplate, NotificationService notificationService, NotificationRepository notificationRepository, AuthenticationHelperService authenticationHelperService, PlayerTransferDTOmapper playerTransferDTOmapper) {
+    public PlayerServiceImpl(PlayerRepository playerRepository, ClubRepository clubRepository, FileUploadService fileUploadService, Function<Player, PlayerDto> playerToPlayerDto, SimpMessagingTemplate simpMessagingTemplate, NotificationService notificationService, NotificationRepository notificationRepository, AuthenticationHelperService authenticationHelperService, PlayerTransferDTOmapper playerTransferDTOmapper) {
         this.playerRepository = playerRepository;
         this.clubRepository = clubRepository;
         this.fileUploadService = fileUploadService;
-        this.playerDtoToPlayer = playerDtoToPlayer;
         this.playerToPlayerDto = playerToPlayerDto;
         this.simpMessagingTemplate = simpMessagingTemplate;
         this.notificationService = notificationService;
@@ -62,8 +60,9 @@ public class PlayerServiceImpl implements PlayerService {
 
         @Override
         public void savePlayer(PlayerDto playerDto, MultipartFile file){
-        Player player = playerDtoToPlayer.apply(playerDto);
-        String fileUpload = fileUploadService.uploadFile(playerDto.getName(),file);
+        Player player = new Player(playerDto.name(),playerDto.height(),playerDto.weight(),playerDto.shirtNumber(),playerDto.preferred_foot(),playerDto.position());
+
+        String fileUpload = fileUploadService.uploadFile(playerDto.name(),file);
         if(fileUpload == null) throw new RuntimeException("Failed to upload file.");
         player.setImagePath(fileUpload); // saved filename
         if(player == null) return;
@@ -71,7 +70,6 @@ public class PlayerServiceImpl implements PlayerService {
         if(clubDb == null) throw new EntityNotFoundException("User is not authenticated.");
         player.setClub(clubDb);
         playerRepository.save(player);
-        String esId = UUID.randomUUID().toString();
     }
 
 
@@ -115,19 +113,19 @@ public class PlayerServiceImpl implements PlayerService {
         if (file != null && !file.isEmpty()) {
             // A new file is provided, handle file upload
             fileUploadService.deleteFile(playerDb.getImagePath()); // Deleting previous file
-            String fileUpload = fileUploadService.uploadFile(playerDto.getName(), file);
+            String fileUpload = fileUploadService.uploadFile(playerDto.name(), file);
             if (fileUpload == null) {
                 throw new RuntimeException("Failed to upload file.");
             }
             playerDb.setImagePath(fileUpload); // Update imagePath with new file path
         }
         // Update other fields
-        playerDb.setName(playerDto.getName());
-        playerDb.setHeight(playerDto.getHeight());
-        playerDb.setWeight(playerDto.getWeight());
-        playerDb.setShirtNumber(playerDto.getShirtNumber());
-        if (playerDto.getPreferred_foot() != null) {
-            playerDb.setPreferred_foot(Foot.valueOf(playerDto.getPreferred_foot()));
+        playerDb.setName(playerDto.name());
+        playerDb.setHeight(playerDto.height());
+        playerDb.setWeight(playerDto.weight());
+        playerDb.setShirtNumber(playerDto.shirtNumber());
+        if (playerDto.preferred_foot() != null) {
+            playerDb.setPreferred_foot(Foot.valueOf(playerDto.preferred_foot()));
         }
         playerRepository.save(playerDb);
 
@@ -141,14 +139,7 @@ public class PlayerServiceImpl implements PlayerService {
     playerRepository.save(playerDb);
     this.simpMessagingTemplate.convertAndSend(("/topic/playerDeleted/"+playerDb.getInsertUserId()),id);
   }
-    @Override
-    public void deletePlayerDto(Long id) {
-        PlayerDto playerDto = this.getPlayerDto(id);
-        if (playerDto == null) throw new EntityNotFoundException("Player not found with specified id: " + id);
-        Player playerDb = playerDtoToPlayer.apply(playerDto);
-        playerDb.setIsDeleted(true);
-        playerRepository.save(playerDb);
-    }
+
 
     @Override
     public void sendDeletePlayerPermission(Long id) {
@@ -177,7 +168,7 @@ public class PlayerServiceImpl implements PlayerService {
 
   @Override
   public void changeTeam(Long id ,ClubDto clubDto) {
-      Club  club = new Club(clubDto.getId(),clubDto.getName(),clubDto.getFoundedYear(),clubDto.getCity(),clubDto.getWebsite());
+      Club  club = new Club(clubDto.id(),clubDto.name(),clubDto.foundedYear(),clubDto.city(),clubDto.website());
       Player player = playerRepository.findById(id).get();
 
       player.setClub(club);

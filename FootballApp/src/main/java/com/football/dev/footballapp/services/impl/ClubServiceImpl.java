@@ -50,10 +50,10 @@ public class ClubServiceImpl implements ClubService {
   public void updateClub(ClubDto clubDto, Long id) {
     if(clubDto == null) return;
     Club clubDb = clubRepository.findById(id).orElseThrow(()->new EntityNotFoundException("Club not found with id: " + id));
-    clubDb.setName(clubDto.getName());
-    clubDb.setFoundedYear(clubDto.getFoundedYear());
-    clubDb.setCity(clubDto.getCity());
-    clubDb.setWebsite(clubDto.getWebsite());
+    clubDb.setName(clubDto.name());
+    clubDb.setFoundedYear(clubDto.foundedYear());
+    clubDb.setCity(clubDto.city());
+    clubDb.setWebsite(clubDto.website());
     clubRepository.save(clubDb);
   }
 

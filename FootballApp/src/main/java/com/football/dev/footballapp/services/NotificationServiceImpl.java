@@ -95,9 +95,9 @@ public class NotificationServiceImpl implements NotificationService{
     }
     @Override
     public void deleteNotification(Long userId,NotificationDto notificationDto) {
-        Notification notificationDb = notificationRepository.findById(notificationDto.getId()).orElseThrow(() -> new EntityNotFoundException("Notification not found"));
+        Notification notificationDb = notificationRepository.findById(notificationDto.id()).orElseThrow(() -> new EntityNotFoundException("Notification not found"));
         if((notificationDb.getToUserId() == userId) || (notificationDb.getSendToAdmin())){
-            notificationRepository.deleteById(notificationDto.getId());
+            notificationRepository.deleteById(notificationDto.id());
             return;
         }
         throw new RuntimeException("Notification can not be deleted!");

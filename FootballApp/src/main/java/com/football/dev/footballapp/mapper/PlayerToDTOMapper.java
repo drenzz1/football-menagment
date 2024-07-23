@@ -14,6 +14,6 @@ public class PlayerToDTOMapper implements Function<Player, PlayerDto> {
     }
     @Override
     public PlayerDto apply(Player player) {
-        return new PlayerDto(player.getId(),player.getName(),player.getHeight(),player.getWeight(),player.getShirtNumber(),player.getImagePath(),player.getPreferred_foot().toString(),player.getPosition().toString(),player.getContracts(),contractDtoMapper);
+        return new PlayerDto(player.getId(),player.getName(),player.getHeight(),player.getWeight(),player.getShirtNumber(),player.getImagePath(),player.getPreferred_foot().toString(),player.getPosition().toString(),player.getContracts().stream().map(contractDtoMapper).toList());
     }
 }

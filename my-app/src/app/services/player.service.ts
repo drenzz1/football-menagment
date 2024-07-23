@@ -41,9 +41,9 @@ export class PlayerService {
     }
     formData.append("playerDto", JSON.stringify(playerDto));
 
-    console.log('URL:', `${this.playerUrl}/edit/${playerDto.dbId}`); // Debugging log
+    console.log('URL:', `${this.playerUrl}/edit/${playerDto.id}`); // Debugging log
 
-    return this.http.post(`${this.playerUrl}/edit/${playerDto.dbId}`, formData, { headers });
+    return this.http.post(`${this.playerUrl}/edit/${playerDto.id}`, formData, { headers });
   }
 
   public sendDeletePlayerPermission(id: number): Observable<any>{

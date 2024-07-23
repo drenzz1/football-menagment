@@ -37,7 +37,6 @@ export class PlayerEditComponent implements OnInit{
       this.getPlayer(playerId);
     });
   }
-
   updatePlayer(){
     if(this.editForm.valid){
       const formValue = this.editForm.value;
@@ -50,7 +49,7 @@ export class PlayerEditComponent implements OnInit{
         formValue.position,
         0
       );
-      playerEditInfo.dbId = this.playerEdit.dbId;
+      playerEditInfo.id = this.playerEdit.id;
       console.log('playerEditInfo before update:', playerEditInfo); // Debugging log
 
       this.playerService.updatePlayer(playerEditInfo, this.file)
@@ -73,8 +72,8 @@ export class PlayerEditComponent implements OnInit{
         "",
         0
       );
-      this.playerEdit.dbId = player.dbId; // Ensure this is correctly set
-      console.log('Retrieved player dbId:', player.dbId); // Debugging log
+      this.playerEdit.id = player.id; // Ensure this is correctly set
+      console.log('Retrieved player dbId:', player.id); // Debugging log
       console.log('Player retrieved:', player);
       this.getEditPlayerImageUrl(player.imagePath);
       this.editForm.patchValue({

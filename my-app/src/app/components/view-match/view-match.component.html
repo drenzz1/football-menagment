@@ -166,6 +166,13 @@
   </div>
 
   <div class="form-group">
+    <button class="form-control bg-green-500" (click)="halfTime( id)">Half Time </button>
+  </div>
+  <div class="form-group">
+    <button class="form-control bg-red-500" (click)="fullTime(id)">Full time </button>
+  </div>
+
+  <div class="form-group">
     <label for="matchDate">Match Time:</label>
     <input type="text" class="form-control" id="matchDate" name="matchDate" [value]="formatMatchDate(match.matchDate)" disabled>
   </div>

@@ -9,6 +9,7 @@ export class MatchDto {
   homeTeamScore: number;
   awayTeamScore: number;
 
+
   constructor(
     id: number,
     homeTeam: ClubDto,

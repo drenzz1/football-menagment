@@ -46,12 +46,12 @@ public class AuthServiceImpl implements AuthService {
     public JwtResponseDto login(LoginDto loginDto) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        loginDto.getEmail(),
-                        loginDto.getPassword()));
+                        loginDto.email(),
+                        loginDto.password()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         if (authentication.isAuthenticated()) {
-            String userEmail = loginDto.getEmail();
+            String userEmail = loginDto.email();
 
             UserEntity user = userRepository.findByEmail(userEmail)
                     .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + userEmail));
@@ -64,14 +64,14 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void register(RegisterDto registerDto) {
-        if (userRepository.existsByEmail(registerDto.getEmail())) {
+        if (userRepository.existsByEmail(registerDto.email())) {
             throw new IllegalArgumentException("Username is taken!");
         }
 
         UserEntity user = new UserEntity();
-        user.setEmail(registerDto.getEmail());
+        user.setEmail(registerDto.email());
 
-        String hashedPassword = passwordEncoder.encode(registerDto.getPassword());
+        String hashedPassword = passwordEncoder.encode(registerDto.password());
         user.setPassword(hashedPassword);
 
         Role role = roleRepository.findByDescription("ADMIN_CLUB")
@@ -79,7 +79,7 @@ public class AuthServiceImpl implements AuthService {
         user.setRole(role);
         UserEntity savedUser = userRepository.save(user);
         Club club = new Club();
-        club.setName(registerDto.getClubName());
+        club.setName(registerDto.clubName());
         club.setUser(user);
         club.setGoals(0L);
         clubRepository.save(club);
@@ -87,7 +87,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public JwtResponseDto refreshToken(RefreshTokenRequestDto refreshTokenRequestDto) {
-        RefreshToken refreshToken = this.refreshTokenService.findByToken(refreshTokenRequestDto.getRefreshToken());
+        RefreshToken refreshToken = this.refreshTokenService.findByToken(refreshTokenRequestDto.refreshToken());
 
 
         if (refreshToken == null || refreshToken.isExpired()) {

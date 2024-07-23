@@ -26,7 +26,7 @@ public class ContractServiceImpl implements ContractService {
     public void saveContract(ContractDto contractDto, Long playerId) {
         if(contractDto == null) throw new IllegalArgumentException("contractDto cannot be null");
         Player playerDb = playerRepository.findById(playerId).orElseThrow(() -> new EntityNotFoundException("Player not found with id: " + playerId));
-        contractRepository.save(new Contract(contractDto.getStartDate(),contractDto.getEndDate(), contractDto.getSalary(),contractDto.getContractType(),playerDb));
+        contractRepository.save(new Contract(contractDto.startDate(),contractDto.endDate(), contractDto.salary(),contractDto.contractType(),playerDb));
     }
 
     @Override
@@ -45,10 +45,10 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public void updateContract(ContractDto contractDto, Long contractId, Long playerId) {
         contractRepository.findByIdAndPlayerId(contractId,playerId).ifPresent(contractDb -> {
-            contractDb.setStartDate(contractDto.getStartDate());
-            contractDb.setEndDate(contractDto.getEndDate());
-            contractDb.setSalary(contractDto.getSalary());
-            contractDb.setContractType(contractDto.getContractType());
+            contractDb.setStartDate(contractDto.startDate());
+            contractDb.setEndDate(contractDto.endDate());
+            contractDb.setSalary(contractDto.salary());
+            contractDb.setContractType(contractDto.contractType());
             contractRepository.save(contractDb);
         });
     }

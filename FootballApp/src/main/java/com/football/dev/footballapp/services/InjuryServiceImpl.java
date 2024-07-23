@@ -26,7 +26,7 @@ public class InjuryServiceImpl implements InjuryService{
     public void saveInjury(InjuryDto injuryDto,Long playerId) {
         if(injuryDto == null) throw new IllegalArgumentException("injuryDto cannot be null");
         Player playerDb = playerRepository.findById(playerId).orElseThrow(() -> new EntityNotFoundException("Player not found with id: " + playerId));
-        injuryRepository.save(new Injury(injuryDto.getInjuryType(),injuryDto.getInjuryDate(),injuryDto.getExpectedRecoveryTime(),injuryDto.getInjuryStatus(),playerDb));
+        injuryRepository.save(new Injury(injuryDto.injuryType(),injuryDto.injuryDate(),injuryDto.expectedRecoveryTime(),injuryDto.injuryStatus(),playerDb));
     }
     @Override
     public Page<InjuryDto> retrieveInjuries(Long playerId, int pageNumber, int pageSize) {
@@ -44,10 +44,10 @@ public class InjuryServiceImpl implements InjuryService{
     @Override
     public void updateInjury(InjuryDto injuryDto, Long injuryId, Long playerId) {
         injuryRepository.findByIdAndPlayerId(injuryId,playerId).ifPresent(injuryDb -> {
-            injuryDb.setInjuryType(injuryDto.getInjuryType());
-            injuryDb.setInjuryDate(injuryDto.getInjuryDate());
-            injuryDb.setExpectedRecoveryTime(injuryDto.getExpectedRecoveryTime());
-            injuryDb.setInjuryStatus(injuryDto.getInjuryStatus());
+            injuryDb.setInjuryType(injuryDto.injuryType());
+            injuryDb.setInjuryDate(injuryDto.injuryDate());
+            injuryDb.setExpectedRecoveryTime(injuryDto.expectedRecoveryTime());
+            injuryDb.setInjuryStatus(injuryDto.injuryStatus());
             injuryRepository.save(injuryDb);
         });
     }

@@ -4,14 +4,5 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.util.Date;
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-public class InjuryDto {
-    private Long id;
-    private String injuryType;
-    private LocalDate injuryDate;
-    private LocalDate expectedRecoveryTime;
-    private InjuryStatus injuryStatus;
+public record InjuryDto (Long id , String injuryType, LocalDate injuryDate, LocalDate expectedRecoveryTime, InjuryStatus injuryStatus) {
 }

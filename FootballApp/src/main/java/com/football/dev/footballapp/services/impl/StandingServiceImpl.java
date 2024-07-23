@@ -43,7 +43,7 @@ public class StandingServiceImpl implements StandingService {
   }
 
   public void insertAllStandings(Long seasonId, List<ClubDto> clubs){
-    clubs.stream().forEach(clubDto -> insertStanding(seasonId,clubDto.getId()));
+    clubs.stream().forEach(clubDto -> insertStanding(seasonId,clubDto.id()));
 
   }
   @Override

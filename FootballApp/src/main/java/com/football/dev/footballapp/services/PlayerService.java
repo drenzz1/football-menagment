@@ -21,7 +21,6 @@ public interface PlayerService {
     Player getPlayer(Long id);
     void updatePlayer(PlayerDto playerDto, Long id, MultipartFile file);
     void deletePlayer(Long id);
-    void deletePlayerDto(Long id);
     void sendDeletePlayerPermission(Long id);
     List<PlayerIdDto> deletedPlayers();
     List<PlayerIdDto> getPlayerIdsWhoAskedPermissionFromCurrentUser();

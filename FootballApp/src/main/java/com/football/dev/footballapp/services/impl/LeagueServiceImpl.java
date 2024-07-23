@@ -45,7 +45,7 @@ public class LeagueServiceImpl implements LeagueService {
     @Override
     public void insertLeague(LeagueDTO leagueDTO) {
 
-        League league = leagueRepository.save(new League(leagueDTO.getName(),leagueDTO.getFounded(),leagueDTO.getDescription(),leagueDTO.getPicture()));
+        League league = leagueRepository.save(new League(leagueDTO.name(),leagueDTO.founded(),leagueDTO.description(),leagueDTO.picture()));
 
         // Generate a unique ID for the Elasticsearch document
         String esId = UUID.randomUUID().toString();
@@ -92,9 +92,9 @@ public class LeagueServiceImpl implements LeagueService {
     public void updateLeague(Long id, LeagueDTO leagueDTO) {
 
         leagueRepository.findById(id).ifPresent(dbLeague->{
-            dbLeague.setName(leagueDTO.getName());
-            dbLeague.setFounded(leagueDTO.getFounded());
-            dbLeague.setDescription(leagueDTO.getDescription());
+            dbLeague.setName(leagueDTO.name());
+            dbLeague.setFounded(leagueDTO.founded());
+            dbLeague.setDescription(leagueDTO.description());
             dbLeague.setPicture(dbLeague.getPicture());
 
 
@@ -124,8 +124,8 @@ public class LeagueServiceImpl implements LeagueService {
 
   @Override
   public void insertLeague(MultipartFile file, LeagueDTO leagueDTO1) {
-    League league = new League(leagueDTO1.getName(),leagueDTO1.getFounded(),leagueDTO1.getDescription(),leagueDTO1.getPicture());
-    String picturePath = fileUploadService.uploadFile(leagueDTO1.getName(), file);
+    League league = new League(leagueDTO1.name(),leagueDTO1.founded(),leagueDTO1.description(),leagueDTO1.picture());
+    String picturePath = fileUploadService.uploadFile(leagueDTO1.name(), file);
     if(picturePath == null) throw new RuntimeException("Failed to upload file.");
     league.setPicture(picturePath);
     leagueRepository.save(league);
@@ -140,16 +140,16 @@ public class LeagueServiceImpl implements LeagueService {
 
     if (file != null && !file.isEmpty()){
       fileUploadService.deleteFile(league.getPicture());
-      String fileUpload = fileUploadService.uploadFile(leagueDtoMapper.getName(), file);
+      String fileUpload = fileUploadService.uploadFile(leagueDtoMapper.name(), file);
       if (fileUpload==null){
         throw new RuntimeException("Failed to upload file.");
       }
       league.setPicture(fileUpload);
 
     }
-    league.setFounded(leagueDtoMapper.getFounded());
-    league.setDescription(leagueDtoMapper.getDescription());
-    league.setName(leagueDtoMapper.getName());
+    league.setFounded(leagueDtoMapper.founded());
+    league.setDescription(leagueDtoMapper.description());
+    league.setName(leagueDtoMapper.name());
 
     leagueRepository.save(league);
   }

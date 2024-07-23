@@ -21,7 +21,10 @@ public interface MatchService {
 
     void goalScored(Long id ,Long aLong);
 
-   void ownGoalScored(Long id, Long aLong);
+    void ownGoalScored(Long id, Long aLong);
+
+    void finnishHalfTime(Long id);
+    void finnishFullTime(Long id );
 
 //    void insertMatch(MatchDTO MatchDTO);
 //    Optional<MatchDTO> selectMatchById(Long id);

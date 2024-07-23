@@ -8,16 +8,11 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import lombok.*;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-public class ClubDto {
-    private Long id;
-    private String name;
-    private Integer foundedYear;
-    private String city;
-    private String website;
+public record ClubDto( Long id,
+   String name,
+   Integer foundedYear,
+   String city,
+   String website) {
+
 
 }

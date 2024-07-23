@@ -54,4 +54,13 @@ export class MatchService {
     const params = `?date=${date}&homeTeamResult=${homeTeamResult}&awayTeamResult=${awayTeamResult}&pageNumber=${page}&pageSize=${size}`;
     return this.http.get(`${this.apiUrl}/filter${params}`);
   }
+
+
+  halfTime(id:number):Observable<any>{
+      return this.http.get(`${this.apiUrl}/${id}/halftime`);
+  }
+
+  fullTime(id:number):Observable<any>{
+      return this.http.get(`${this.apiUrl}/${id}/fulltime`);
+  }
 }

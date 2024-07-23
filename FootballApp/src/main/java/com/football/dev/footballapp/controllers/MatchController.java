@@ -55,7 +55,6 @@ public class MatchController {
     public ResponseEntity<String> editMatch(@PathVariable("roundId") Long roundId,@PathVariable("matchId") Long matchId,
                                             @RequestBody MatchDTO matchDTO) {
         matchService.updateMatch(matchDTO,matchId,roundId);
-      System.out.println(matchDTO.getMatchDate());
         return ResponseEntity.status(HttpStatus.OK).build();
     }
     @DeleteMapping("/{roundId}/delete/{matchId}")
@@ -84,6 +83,18 @@ public class MatchController {
       matchEventService.deleteMatchEvent(matchId,matchEventId);
       return ResponseEntity.status(HttpStatus.OK).build();
     }
+    @GetMapping("/{matchId}/halftime")
+    public ResponseEntity<String> halfTime(@PathVariable("matchId")Long id){
+    matchService.finnishHalfTime(id);
+    return ResponseEntity.status(HttpStatus.OK).build();
+    }
+   @GetMapping("/{matchId}/fulltime")
+  public ResponseEntity<String> fullTime(@PathVariable("matchId")Long id){
+    matchService.finnishFullTime(id);
+    return ResponseEntity.status(HttpStatus.OK).build();
+  }
+
+
 
 
 

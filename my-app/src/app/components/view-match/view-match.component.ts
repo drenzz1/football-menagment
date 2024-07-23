@@ -27,6 +27,9 @@ export class ViewMatchComponent implements OnInit{
   roundEvents: Matcheventdto[]=[];
   arrayOfEvents : Matcheventdto[]=[];
 
+  fulltime:boolean=false;
+  halftime:boolean= false;
+
 
 
   constructor(private route: ActivatedRoute, private router: Router, private matchService: MatchService) { }
@@ -39,12 +42,9 @@ export class ViewMatchComponent implements OnInit{
       this.seasonId = +params['seasonId'];
       this.roundId = +params['roundId'];
       this.loadMatchDetails(this.roundId, this.id);
+      console.log(this.match)
       this.matchService.getMatchEvents(this.roundId,this.id).subscribe(data=>{
         this.roundEvents=data
-
-
-
-
       })
     });
   }
@@ -72,5 +72,31 @@ export class ViewMatchComponent implements OnInit{
 
   goToCreateEvent(roundId: number, matchId: number) {
     this.router.navigate([`league/${this.leagueId}/seasons/${this.seasonId}/rounds/${roundId}/match/${matchId}/create`])
+  }
+
+  halfTime(matchId:number){
+    this.halftime=true;
+    this.matchService.halfTime(matchId).subscribe(
+      match => {
+        this.match = match;
+
+      },
+      error => {
+        console.error('Error on finishing half time  :', error);
+      }
+    );
+  }
+
+  fullTime(matchId:number){
+    this.fulltime=true;
+    this.matchService.fullTime(matchId).subscribe(
+      match => {
+        this.match = match;
+
+      },
+      error => {
+        console.error('Error on finishing half time  :', error);
+      }
+    );
   }
 }

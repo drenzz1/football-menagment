@@ -41,19 +41,19 @@
       <td>{{ val.preferred_foot }}</td>
       <td>{{ val.position }}</td>
       <td>
-        <button class="btn btn-warning mr-2" (click)="editPlayer(val.dbId)">Edit</button>
-        <button class="btn btn-danger" *ngIf="!val.permissionSent" (click)="deletePlayer(val.dbId)">Ask Delete Permission</button>
-        <button class="btn btn-danger" *ngIf="val.permissionSent" disabled (click)="deletePlayer(val.dbId)">Waiting for Permission</button>
+        <button class="btn btn-warning mr-2" (click)="editPlayer(val.id)">Edit</button>
+        <button class="btn btn-danger" *ngIf="!val.permissionSent" (click)="deletePlayer(val.id)">Ask Delete Permission</button>
+        <button class="btn btn-danger" *ngIf="val.permissionSent" disabled (click)="deletePlayer(val.id)">Waiting for Permission</button>
       </td>
       <td>
-        <button class="btn btn-primary" (click)="redirectToCreatePlayerContract(val.dbId)" *ngIf="val.contracts?.length == 0">Create Contract</button>
-        <button class="btn btn-primary" (click)="redirectToCreatePlayerContract(val.dbId)" *ngIf="val.contracts?.length! > 0" disabled>Create Contract</button>
+        <button class="btn btn-primary" (click)="redirectToCreatePlayerContract(val.id)" *ngIf="val.contracts?.length == 0">Create Contract</button>
+        <button class="btn btn-primary" (click)="redirectToCreatePlayerContract(val.id)" *ngIf="val.contracts?.length! > 0" disabled>Create Contract</button>
       </td>
       <td>
-        <button class="btn btn-info" (click)="redirectToPlayerContracts(val.dbId)">Show Contracts</button>
+        <button class="btn btn-info" (click)="redirectToPlayerContracts(val.id)">Show Contracts</button>
       </td>
       <td>
-        <button class="btn btn-secondary" (click)="redirectToPlayerInjuries(val.dbId)">Show Injuries</button>
+        <button class="btn btn-secondary" (click)="redirectToPlayerInjuries(val.id)">Show Injuries</button>
       </td>
     </tr>
     </tbody>
