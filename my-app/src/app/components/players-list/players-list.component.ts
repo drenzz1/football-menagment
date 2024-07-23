@@ -112,6 +112,7 @@ export class PlayersListComponent implements OnInit, OnDestroy{
   getPlayerImageUrl(playerDto: PlayerDto): void {
     if (playerDto.imagePath) {
       this.playerService.getImageUrl(playerDto.imagePath).subscribe((blob: Blob) => {
+          console.log(playerDto.imagePath);
           const imageUrl = URL.createObjectURL(blob);
           playerDto.imagePath = imageUrl;
           console.log(imageUrl);

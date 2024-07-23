@@ -28,18 +28,12 @@ export class UpdateLeagueComponent implements OnInit {
       description: ['', [Validators.required]],
       file: [null, [ImageFileValidator.invalidImageType]]
     });
+
   }
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       const leagueId = params['id'];
-      const leagueData = history.state.league;
-
-      if (leagueData) {
-        this.league = leagueData;
-        this.getLeagueImageUrl(this.league.picture);
-        this.patchForm(this.league);
-      } else {
         this.leagueService.returnLeagueById(leagueId).subscribe((data: LeagueDto) => {
           this.league = data;
           this.getLeagueImageUrl(data.picture);
@@ -47,7 +41,7 @@ export class UpdateLeagueComponent implements OnInit {
         }, error => {
           console.error('Failed to fetch league data', error);
         });
-      }
+
     });
   }
 
@@ -61,7 +55,7 @@ export class UpdateLeagueComponent implements OnInit {
         formValue.description,
         this.league.picture
       );
-
+      console.log(updatedLeague)
       this.leagueService.editLeague(updatedLeague, this.selectedFile).subscribe(() => {
         this.router.navigate(['/league']);
       }, error => {
@@ -86,6 +80,7 @@ export class UpdateLeagueComponent implements OnInit {
 
   getLeagueImageUrl(imagePath: string): void {
     if (imagePath) {
+      console.log(imagePath)
       this.leagueService.getImageUrl(imagePath).subscribe((blob: Blob) => {
         const imageUrl = URL.createObjectURL(blob);
         this.league.picture = imageUrl;
